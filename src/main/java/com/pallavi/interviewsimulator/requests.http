@@ -1,0 +1,9 @@
+POST http://localhost:8082/
+Content-Type: application/json
+
+{
+  "question" : "What is JDBC?",
+  "category" : "Java",
+  "difficulty" : "Easy",
+  "correctAnswer" : "JDBC (Java Database Connectivity) is a standard Java API that allows applications to connect to relational databases."
+}
