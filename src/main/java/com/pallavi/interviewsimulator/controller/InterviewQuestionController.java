@@ -10,6 +10,7 @@ import java.util.*;
 
 
 @RestController
+@RequestMapping("/questions")
 public class InterviewQuestionController {
 
     private final InterviewQuestionService questionService;
