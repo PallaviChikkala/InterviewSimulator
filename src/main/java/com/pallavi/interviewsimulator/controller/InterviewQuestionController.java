@@ -27,9 +27,8 @@ public class InterviewQuestionController {
     }
 
     @GetMapping("/{id}")
-    public Optional<InterviewQuestionDTO> getQuestionById(@PathVariable Long id)
+    public InterviewQuestionDTO getQuestionById(@PathVariable Long id)
     {
-        System.out.println("ID received: "+id);
         return questionService.getQuestionById(id);
     }
 
@@ -50,5 +49,11 @@ public class InterviewQuestionController {
     public InterviewQuestion deleteQuestion(@PathVariable Long id)
     {
         return questionService.deleteQuestion(id);
+    }
+
+    @GetMapping("/category/{category}")
+    public List<InterviewQuestionDTO> filterByCategory(@PathVariable String category)
+    {
+        return questionService.filterByCategory(category);
     }
 }

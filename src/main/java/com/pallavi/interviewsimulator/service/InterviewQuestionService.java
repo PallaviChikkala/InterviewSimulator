@@ -32,7 +32,7 @@ public class InterviewQuestionService {
                 .toList();
     }
 
-    public Optional<InterviewQuestionDTO> getQuestionById(Long id)
+    public InterviewQuestionDTO getQuestionById(Long id)
     {
 
         InterviewQuestion question = repository.findById(id)
@@ -40,14 +40,12 @@ public class InterviewQuestionService {
                         "Question with ID "+id+" not found."
                 ));
 
-        InterviewQuestionDTO dto = new InterviewQuestionDTO(
+       return new InterviewQuestionDTO(
                 question.getId(),
                 question.getQuestion(),
                 question.getCategory(),
                 question.getDifficulty()
         );
-
-            return Optional.of(dto);
 
     }
 
@@ -59,39 +57,39 @@ public class InterviewQuestionService {
 
     public InterviewQuestion updateQuestion(InterviewQuestion question, Long id)
     {
-        Optional<InterviewQuestion> optionalUpdate = repository.findById(id);
+        InterviewQuestion updatingQuestion = repository.findById(id)
+                .orElseThrow(() -> new QuestionNotFoundException(
+                        "Question with ID" + id + " not found."
+                        ));
+        updatingQuestion.setQuestion(question.getQuestion());
+        updatingQuestion.setCategory(question.getCategory());
+        updatingQuestion.setDifficulty(question.getDifficulty());
+        updatingQuestion.setCorrectAnswer(question.getCorrectAnswer());
 
-        if(optionalUpdate.isPresent())
+        return repository.save(updatingQuestion);
+    }
+
+    public InterviewQuestion deleteQuestion(Long id)
+    {
+        InterviewQuestion deleteQuestion = repository.findById(id)
+                .orElseThrow(() -> new QuestionNotFoundException(
+                        "Question with ID "+id+ " not found."
+                ));
+        repository.deleteById(id);
+        return deleteQuestion;
+    }
+
+        public List<InterviewQuestionDTO> filterByCategory(String category)
         {
-            InterviewQuestion updatingQuestion = optionalUpdate.get();
-
-            updatingQuestion.setQuestion(question.getQuestion());
-            updatingQuestion.setCategory(question.getCategory());
-            updatingQuestion.setDifficulty(question.getDifficulty());
-            updatingQuestion.setCorrectAnswer(question.getCorrectAnswer());
-
-            repository.save(updatingQuestion);
-
-            return updatingQuestion;
-
+            return repository.findByCategory(category)
+                    .stream()
+                    .map(question -> new InterviewQuestionDTO(
+                            question.getId(),
+                            question.getQuestion(),
+                            question.getCategory(),
+                            question.getDifficulty()
+                    ))
+                    .toList();
         }
-
-        return null;
-    }
-
-    public InterviewQuestion deleteQuestion(Long id) {
-        Optional<InterviewQuestion> optionalDelete = repository.findById(id);
-
-        if (optionalDelete.isPresent()) {
-
-            InterviewQuestion deleteQuestion = optionalDelete.get();
-
-            repository.deleteById(id);
-
-            return deleteQuestion;
-        }
-
-        return null;
-    }
 
 }
